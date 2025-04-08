@@ -1,4 +1,4 @@
-environments/snake_env.py
+# environments/snake_env.py
 
 tests/test_random_simulation.py
 
