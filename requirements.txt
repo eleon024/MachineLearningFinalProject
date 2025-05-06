@@ -1,6 +1,0 @@
-gymnasium
-numpy
-matplotlib
-pandas
-scipy
-

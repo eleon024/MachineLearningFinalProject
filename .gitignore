@@ -2,3 +2,4 @@
 
 tests/test_random_simulation.py
 
+tests/edgar_test_flow.py
