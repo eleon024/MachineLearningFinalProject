@@ -3,8 +3,8 @@ import random
 import numpy as np
 from collections import deque  # stores memories
 from game_complex import SnakeGameAI, Direction, Point
-from simple_snake.model_simple import Linear_QNet, QTrainer
-from simple_snake.helper_simple import plot
+from model_complex import Linear_QNet, QTrainer
+from helper_complex import plot
 
 MAX_MEMORY = 100_000
 BATCH_SIZE = 1000

@@ -10,8 +10,8 @@ MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
 LR = 0.001
 
-class Agent:
 
+class Agent:
     def __init__(self):
         self.n_games = 0
         self.epsilon = 0 # randomness
@@ -19,7 +19,6 @@ class Agent:
         self.memory = deque(maxlen=MAX_MEMORY) # popleft()
         self.model = Linear_QNet(11, 256, 3)
         self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
-
 
     def get_state(self, game):
         head = game.snake[0]
@@ -149,9 +148,6 @@ def train():
                 plot(plot_scores, plot_mean_scores)
 
             num_training_games -= 1
-
-
-    
 
 
 if __name__ == '__main__':
