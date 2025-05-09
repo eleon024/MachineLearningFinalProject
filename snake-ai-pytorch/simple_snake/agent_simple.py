@@ -169,7 +169,11 @@ def test():
     plot_scores = []
     plot_mean_scores = []
     speeds_per_game = [] # - R
+    plot_mean_speed = [] # - R
+    total_time = 0
+    total_speeds = 0
     plot_times = [] # - R
+    plot_mean_time = [] # - R
     total_score = 0
     record = 0
     agent = Agent()
@@ -201,7 +205,6 @@ def test():
                 avg_speed = sum(game.speeds)/len(game.speeds)
             else:
                 avg_speed = 0
-                # avg_speed = float('nan')
             speeds_per_game.append(avg_speed)
 
             # train long memory, plot result
@@ -219,12 +222,17 @@ def test():
             total_score += score
             mean_score = total_score / agent.n_games
             plot_mean_scores.append(round(mean_score,2))
+
             plot_times.append(time) # - R
-            plot_combined(plot_scores, plot_mean_scores, plot_times, speeds_per_game)
-            if num_testing_games == 1:
-                # agent.model.save(str(filename_num) + "_games_basic_" + str(round(mean_score, 2)) + "_mean.pth")
-                plot_combined(plot_scores, plot_mean_scores, plot_times, speeds_per_game)
-                # plt.savefig("figures/"+str("combined_plot_simple")+".svg", format="svg")
+            total_time += time
+            mean_time = total_time / agent.n_games
+            plot_mean_time.append(round(mean_time,2))
+
+            total_speeds += avg_speed
+            mean_speed = total_speeds / agent.n_games
+            plot_mean_speed.append(round(mean_speed,2))
+
+            plot_combined(plot_scores, plot_mean_scores, plot_times, plot_mean_time, speeds_per_game, plot_mean_speed)
             num_testing_games -= 1
 
 

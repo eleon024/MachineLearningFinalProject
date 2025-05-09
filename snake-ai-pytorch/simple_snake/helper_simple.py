@@ -25,23 +25,40 @@ def plot(scores, mean_scores, title, filename, filepath, save=True):
 
 fig, axs = plt.subplots(1, 3, figsize=(12, 5))
 display.display(fig)
-def plot_combined(scores, mean_scores, times, speeds):
+def plot_combined(plot_scores, plot_mean_scores, plot_times, plot_mean_time, speeds_per_game, plot_mean_speed):
     axs[0].cla()
     axs[0].set_title('Score')
-    axs[0].plot(scores, label='Score')
-    axs[0].plot(mean_scores, label='Mean')
+    axs[0].plot(plot_scores, label='Score')
+    axs[0].plot(plot_mean_scores, label='Mean')
     axs[0].legend()
     axs[0].set_ylim(ymin=0)
-
+    
+    x_m, y_m = len(plot_mean_scores)-1, plot_mean_scores[-1]
+    axs[0].text(x_m, y_m, str(y_m),
+            ha='left', va='bottom')
+    
     axs[1].cla()
     axs[1].set_title('Survival Time')
-    axs[1].plot(times, color='orange')
+    axs[1].plot(plot_times, label='Time')
+    axs[1].plot(plot_mean_time, label='Mean')
+    axs[1].legend()
     axs[1].set_ylim(ymin=0)
+    
+    x_n, y_n = len(plot_mean_time)-1, plot_mean_time[-1]
+    axs[1].text(x_n, y_n, str(y_n),
+            ha='left', va='bottom')
 
     axs[2].cla()
-    axs[2].set_title('Average Number of Moves')
-    axs[2].plot(speeds, color='green')
+    axs[2].set_title('Number of Moves')
+    axs[2].plot(speeds_per_game, label='Moves')
+    axs[2].plot(plot_mean_speed, label='Mean')
+    axs[2].legend()
     axs[2].set_ylim(ymin=0)
+    
+    x_o, y_o = len(plot_mean_speed)-1, plot_mean_speed[-1]
+    axs[2].text(x_o, y_o, str(y_o),
+            ha='left', va='bottom')
+
 
     # Redraw without creating a new figure
     display.clear_output(wait=True)
