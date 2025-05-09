@@ -64,7 +64,7 @@ class SnakeGameAI:
         for poison in range(self.num_poison):   # places each poison apple down
             self._place_poison()
         self.frame_iteration = 0
-        self.speeds = []
+        self.speeds = [] # - R
         self.start_time = time.time() # starts timer - R
         self.elapsed_time = 0 # initialize timer - R
 

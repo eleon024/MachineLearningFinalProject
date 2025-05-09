@@ -3,11 +3,11 @@ from IPython import display
 
 plt.ion()
 
-def plot(scores, mean_scores, title, filename, filepath, save=True):
+def plot(scores, mean_scores,save=False,filename="figure"):
     display.clear_output(wait=True)
     display.display(plt.gcf())
     plt.clf()
-    plt.title(title)
+    plt.title('Traditional Snake Traning: Score vs Number of games')
     plt.xlabel('Number of Games')
     plt.ylabel('Score')
     plt.plot(scores, label="scores")
@@ -21,6 +21,7 @@ def plot(scores, mean_scores, title, filename, filepath, save=True):
 
     if (save):
         plt.savefig("figures/"+str(filename)+".svg", format="svg")
+
 
 
 def plot_combined(scores, mean_scores, times, speeds):
@@ -48,4 +49,4 @@ def plot_combined(scores, mean_scores, times, speeds):
     display.display(fig)
     plt.pause(0.001)
 
-    plt.savefig("figures/"+str("combined_plot_simple")+".svg", format="svg")
+    plt.savefig("figures/"+str("combined_plot_complex_obs")+".svg", format="svg")

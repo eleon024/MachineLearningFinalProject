@@ -156,8 +156,7 @@ def train():
             plot_times.append(time) # - R
             if num_training_games == 1:
                 agent.model.save(str(filename_num) + "_games_basic_" + str(round(mean_score, 2)) + "_mean.pth")
-                plot_combined(plot_scores, plot_mean_scores, plot_times, speeds_per_game, save=True,
-                    filename=str(filename_num) + "_games_basic_" + str(round(mean_score, 2)) + "_mean")
+                plot_combined(plot_scores, plot_mean_scores, plot_times, speeds_per_game)
                 # plot(plot_scores, plot_mean_scores, save=True,
                      # filename=str(filename_num) + "_games_basic_" + str(round(mean_score, 2)) + "_mean")
             else:

@@ -155,9 +155,8 @@ def train():
 
             plot_times.append(time) # - R
             if num_training_games == 1:
-                agent.model.save(str(filename_num) + "_games_basic_" + str(round(mean_score, 2)) + "_mean.pth")
-                plot_combined(plot_scores, plot_mean_scores, plot_times, speeds_per_game, save=True,
-                     filename=str(filename_num) + "_games_basic_" + str(round(mean_score, 2)) + "_mean")
+                # agent.model.save(str(filename_num) + "_games_basic_" + str(round(mean_score, 2)) + "_mean.pth")
+                plot_combined(plot_scores, plot_mean_scores, plot_times, speeds_per_game)
                 # plot(plot_scores, plot_mean_scores,save=True,filename=str(filename_num)+"_games_basic_" + str(round(mean_score,2)) + "_mean")
             else:
                 # plot(plot_scores, plot_mean_scores)
@@ -168,10 +167,12 @@ def train():
 def test():
     plot_scores = []
     plot_mean_scores = []
+    speeds_per_game = [] # - R
+    plot_times = [] # - R
     total_score = 0
     record = 0
     agent = Agent()
-    agent.model.load_state_dict(torch.load("simple_snake/model/1000_games_basic_30.83_mean.pth"))
+    agent.model.load_state_dict(torch.load("model/1000_games_basic_30.83_mean.pth"))
     game = SnakeGameAI()
     num_testing_games = 1000
     filename_num = num_testing_games
@@ -184,7 +185,7 @@ def test():
         final_move = agent.get_action(state_old,epsilon=0)
 
         # perform move and get new state
-        reward, done, score = game.play_step(final_move)
+        reward, done, score, time = game.play_step(final_move)
         state_new = agent.get_state(game)
 
         # train short memory
@@ -194,6 +195,14 @@ def test():
         agent.remember(state_old, final_move, reward, state_new, done)
 
         if done:
+            # - R
+            if game.speeds:
+                avg_speed = sum(game.speeds)/len(game.speeds)
+            else:
+                avg_speed = 0
+                # avg_speed = float('nan')
+            speeds_per_game.append(avg_speed)
+
             # train long memory, plot result
             game.reset()
             agent.n_games += 1
@@ -203,18 +212,19 @@ def test():
                 record = score
                 # agent.model.save(str(filename_num) + "_games_basic_high.pth")
 
-            print('Game', agent.n_games, 'Score', score, 'Record:', record)
+            print('Game', agent.n_games, 'Score', score, 'Record:', record, "Time", time)
 
             plot_scores.append(score)
             total_score += score
             mean_score = total_score / agent.n_games
             plot_mean_scores.append(round(mean_score,2))
+            plot_times.append(time) # - R
+            plot_combined(plot_scores, plot_mean_scores, plot_times, speeds_per_game)
             if num_testing_games == 1:
                 # agent.model.save(str(filename_num) + "_games_basic_" + str(round(mean_score, 2)) + "_mean.pth")
-                plot(plot_scores, plot_mean_scores,title="Traditional Snake Testing: Score vs Number of games",filepath="simple_snake/figures/",filename=str(filename_num)+"_TESTS_basic_" + str(round(mean_score,2)) + "_mean")
-            else:
+                plot_combined(plot_scores, plot_mean_scores, plot_times, speeds_per_game)
                 print("before")
-                plot(plot_scores, plot_mean_scores,title="Traditional Snake Testing: Score vs Number of games",filepath="simple_snake/figures/",filename=str(filename_num)+"_TESTS_basic_" + str(round(mean_score,2)) + "_mean",save=False)
+                # plot(plot_scores, plot_mean_scores,title="Traditional Snake Testing: Score vs Number of games",filepath="simple_snake/figures/",filename=str(filename_num)+"_TESTS_basic_" + str(round(mean_score,2)) + "_mean",save=False)
                 print("after")
             num_testing_games -= 1
 
