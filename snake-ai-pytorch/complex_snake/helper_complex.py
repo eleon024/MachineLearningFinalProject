@@ -47,3 +47,6 @@ def plot_combined(scores, mean_scores, times, speeds):
     display.clear_output(wait=True)
     display.display(fig)
     plt.pause(0.001)
+
+
+    plt.savefig("figures/"+str("combined_plot_complex")+".svg", format="svg")

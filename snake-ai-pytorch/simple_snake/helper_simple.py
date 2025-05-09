@@ -21,6 +21,7 @@ def plot(scores, mean_scores,save=False,filename="figure"):
 
     if (save):
         plt.savefig("figures/"+str(filename)+".svg", format="svg")
+
 fig, axs = plt.subplots(1, 3, figsize=(12, 5))
 display.display(fig)
 
@@ -46,3 +47,5 @@ def plot_combined(scores, mean_scores, times, speeds):
     display.clear_output(wait=True)
     display.display(fig)
     plt.pause(0.001)
+
+    plt.savefig("figures/"+str("combined_plot_simple")+".svg", format="svg")
