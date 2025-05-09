@@ -223,9 +223,6 @@ def test():
             if num_testing_games == 1:
                 # agent.model.save(str(filename_num) + "_games_basic_" + str(round(mean_score, 2)) + "_mean.pth")
                 plot_combined(plot_scores, plot_mean_scores, plot_times, speeds_per_game)
-                print("before")
-                # plot(plot_scores, plot_mean_scores,title="Traditional Snake Testing: Score vs Number of games",filepath="simple_snake/figures/",filename=str(filename_num)+"_TESTS_basic_" + str(round(mean_score,2)) + "_mean",save=False)
-                print("after")
             num_testing_games -= 1
 
 
