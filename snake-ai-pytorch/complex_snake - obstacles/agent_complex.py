@@ -143,13 +143,64 @@ def train():
             plot_mean_scores.append(round(mean_score, 2))
             if num_training_games == 1:
                 agent.model.save(str(filename_num) + "_games_basic_" + str(round(mean_score, 2)) + "_mean.pth")
-                plot(plot_scores, plot_mean_scores, save=True,
-                     filename=str(filename_num) + "_games_basic_" + str(round(mean_score, 2)) + "_mean")
+                plot(plot_scores, plot_mean_scores,title="CHANGE TITLE",filepath="CHANGE FILEPATH",filename=str(filename_num)+"_TESTS_basic_" + str(round(mean_score,2)) + "_mean")
             else:
-                plot(plot_scores, plot_mean_scores)
+                plot(plot_scores, plot_mean_scores,title="CHANGE TITLE",filepath="CHANGE FILEPATH",filename=str(filename_num)+"_TESTS_basic_" + str(round(mean_score,2)) + "_mean", save=False)
 
             num_training_games -= 1
 
 
+def test():
+    plot_scores = []
+    plot_mean_scores = []
+    total_score = 0
+    record = 0
+    agent = Agent()
+    agent.model.load_state_dict(torch.load("INSERT MODEL FILENAME HERE"))
+    game = SnakeGameAI()
+    num_testing_games = 1000
+    filename_num = num_testing_games
+
+    while num_testing_games > 0:
+        # get old state
+        state_old = agent.get_state(game)
+
+        # get move
+        final_move = agent.get_action(state_old,epsilon=0)
+
+        # perform move and get new state
+        reward, done, score = game.play_step(final_move)
+        state_new = agent.get_state(game)
+
+        # train short memory
+        # agent.train_short_memory(state_old, final_move, reward, state_new, done)
+
+        # remember
+        agent.remember(state_old, final_move, reward, state_new, done)
+
+        if done:
+            # train long memory, plot result
+            game.reset()
+            agent.n_games += 1
+            # agent.train_long_memory()
+
+            if score > record:
+                record = score
+                # agent.model.save(str(filename_num) + "_games_basic_high.pth")
+
+            print('Game', agent.n_games, 'Score', score, 'Record:', record)
+
+            plot_scores.append(score)
+            total_score += score
+            mean_score = total_score / agent.n_games
+            plot_mean_scores.append(round(mean_score,2))
+            if num_testing_games == 1:
+                # agent.model.save(str(filename_num) + "_games_basic_" + str(round(mean_score, 2)) + "_mean.pth")
+                plot(plot_scores, plot_mean_scores,title="CHANGE TITLE",filepath="CHANGE FILEPATH",filename=str(filename_num)+"_TESTS_basic_" + str(round(mean_score,2)) + "_mean")
+            else:
+                plot(plot_scores, plot_mean_scores,title="CHANGE TITLE",filepath="CHANGE FILEPATH",filename=str(filename_num)+"_TESTS_basic_" + str(round(mean_score,2)) + "_mean", save=False)
+            num_testing_games -= 1
+
 if __name__ == '__main__':
-    train()
+    #train()
+    test()
