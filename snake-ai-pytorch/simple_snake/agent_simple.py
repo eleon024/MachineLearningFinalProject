@@ -213,9 +213,7 @@ def test():
                 # agent.model.save(str(filename_num) + "_games_basic_" + str(round(mean_score, 2)) + "_mean.pth")
                 plot(plot_scores, plot_mean_scores,title="Traditional Snake Testing: Score vs Number of games",filepath="simple_snake/figures/",filename=str(filename_num)+"_TESTS_basic_" + str(round(mean_score,2)) + "_mean")
             else:
-                print("before")
                 plot(plot_scores, plot_mean_scores,title="Traditional Snake Testing: Score vs Number of games",filepath="simple_snake/figures/",filename=str(filename_num)+"_TESTS_basic_" + str(round(mean_score,2)) + "_mean",save=False)
-                print("after")
             num_testing_games -= 1
 
 
