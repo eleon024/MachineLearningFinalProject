@@ -5,6 +5,7 @@ from collections import deque  # stores memories
 from game_complex_obs import SnakeGameAI, Direction, Point
 from model_complex_obs import Linear_QNet, QTrainer
 from helper_complex_obs import plot, plot_combined
+import time
 
 MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
@@ -169,9 +170,12 @@ def train():
 def test():
     plot_scores = []
     plot_mean_scores = []
+    speeds_per_game = [] # - R
+    plot_times = [] # - R
     total_score = 0
     record = 0
     agent = Agent()
+    agent.model.load_state_dict(torch.load("model/1000_games_basic_high.pth"))
     agent.model.load_state_dict(torch.load("model/1000_games_basic_high.pth"))
     game = SnakeGameAI()
     num_testing_games = 1000
@@ -182,10 +186,10 @@ def test():
         state_old = agent.get_state(game)
 
         # get move
-        final_move = agent.get_action(state_old,self.epsilon=0)
+        final_move = agent.get_action(state_old)
 
         # perform move and get new state
-        reward, done, score = game.play_step(final_move)
+        reward, done, score, time = game.play_step(final_move)
         state_new = agent.get_state(game)
 
         # train short memory
@@ -195,6 +199,14 @@ def test():
         agent.remember(state_old, final_move, reward, state_new, done)
 
         if done:
+            # - R
+            if game.speeds:
+                avg_speed = sum(game.speeds)/len(game.speeds)
+            else:
+                avg_speed = 0
+                # avg_speed = float('nan')
+            speeds_per_game.append(avg_speed)
+
             # train long memory, plot result
             game.reset()
             agent.n_games += 1
@@ -204,17 +216,22 @@ def test():
                 record = score
                 # agent.model.save(str(filename_num) + "_games_basic_high.pth")
 
-            print('Game', agent.n_games, 'Score', score, 'Record:', record)
+            print('Game', agent.n_games, 'Score', score, 'Record:', record, "Time", time)
 
             plot_scores.append(score)
             total_score += score
             mean_score = total_score / agent.n_games
             plot_mean_scores.append(round(mean_score,2))
+
+            plot_times.append(time) # - R
+
             if num_testing_games == 1:
                 # agent.model.save(str(filename_num) + "_games_basic_" + str(round(mean_score, 2)) + "_mean.pth")
-                plot(plot_scores, plot_mean_scores,title="CHANGE TITLE",filepath="CHANGE FILEPATH",filename=str(filename_num)+"_TESTS_basic_" + str(round(mean_score,2)) + "_mean")
+                plot_combined(plot_scores, plot_mean_scores, plot_times, speeds_per_game)
+                # plot(plot_scores, plot_mean_scores,title="CHANGE TITLE",filepath="CHANGE FILEPATH",filename=str(filename_num)+"_TESTS_basic_" + str(round(mean_score,2)) + "_mean")
             else:
-                plot(plot_scores, plot_mean_scores,title="CHANGE TITLE",filepath="CHANGE FILEPATH",filename=str(filename_num)+"_TESTS_basic_" + str(round(mean_score,2)) + "_mean", save=False)
+                plot_combined(plot_scores, plot_mean_scores, plot_times, speeds_per_game)
+                # plot(plot_scores, plot_mean_scores,title="CHANGE TITLE",filepath="CHANGE FILEPATH",filename=str(filename_num)+"_TESTS_basic_" + str(round(mean_score,2)) + "_mean", save=False)
             num_testing_games -= 1
 
 if __name__ == '__main__':
