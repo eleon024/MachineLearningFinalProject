@@ -21,3 +21,29 @@ def plot(scores, mean_scores,save=False,filename="figure"):
 
     if (save):
         plt.savefig("figures/"+str(filename)+".svg", format="svg")
+
+fig, axs = plt.subplots(1, 3, figsize=(12, 5))
+display.display(fig)
+
+def plot_combined(scores, mean_scores, times, speeds):
+    axs[0].cla()
+    axs[0].set_title('Score')
+    axs[0].plot(scores, label='Score')
+    axs[0].plot(mean_scores, label='Mean')
+    axs[0].legend()
+    axs[0].set_ylim(ymin=0)
+
+    axs[1].cla()
+    axs[1].set_title('Survival Time')
+    axs[1].plot(times, color='orange')
+    axs[1].set_ylim(ymin=0)
+
+    axs[2].cla()
+    axs[2].set_title('Average Number of Moves')
+    axs[2].plot(speeds, color='green')
+    axs[2].set_ylim(ymin=0)
+
+    # Redraw without creating a new figure
+    display.clear_output(wait=True)
+    display.display(fig)
+    plt.pause(0.001)

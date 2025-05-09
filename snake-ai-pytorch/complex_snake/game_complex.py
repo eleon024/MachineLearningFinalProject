@@ -3,6 +3,7 @@ import random
 from enum import Enum
 from collections import namedtuple
 import numpy as np
+import time
 
 pygame.init()
 font = pygame.font.Font('../arial.ttf', 25)
@@ -46,6 +47,9 @@ class SnakeGameAI:
 
     def reset(self):
         # init game state
+        # - R
+        self.last_food_frame = 0
+
         self.direction = Direction.RIGHT
 
         self.head = Point(self.w / 2, self.h / 2)
@@ -60,6 +64,9 @@ class SnakeGameAI:
         for poison in range(self.num_poison):   # places each poison apple down
             self._place_poison()
         self.frame_iteration = 0
+        self.speeds = []
+        self.start_time = time.time() # starts timer - R
+        self.elapsed_time = 0 # initialize timer - R
 
     def _place_food(self):
         x = random.randint(0, (self.w - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
@@ -106,10 +113,16 @@ class SnakeGameAI:
         if self.is_collision() or self.frame_iteration > 100 * len(self.snake):
             game_over = True
             reward = -10
-            return reward, game_over, self.score
+            return reward, game_over, self.score, self.elapsed_time
 
         # 4. place new food or just move
+
         if self.head == self.food:
+            # - R add below:
+            steps_to_food = self.frame_iteration - self.last_food_frame
+            self.speeds.append(steps_to_food)
+            self.last_food_frame = self.frame_iteration
+
             self.score += 1
             reward = 10
             self._place_food()
@@ -120,7 +133,12 @@ class SnakeGameAI:
         self._update_ui()
         self.clock.tick(SPEED)
         # 6. return game over and score
-        return reward, game_over, self.score
+
+        # - R edits
+        self.survival_time = self.frame_iteration
+        self.elapsed_time = time.time() - self.start_time
+
+        return reward, game_over, self.score, self.elapsed_time
 
     def is_collision(self, pt=None):
         if pt is None:
@@ -155,6 +173,10 @@ class SnakeGameAI:
         text = font.render("Score: " + str(self.score), True, WHITE)
         self.display.blit(text, [0, 0])
         pygame.display.flip()
+
+        if hasattr(self, 'elapsed_time'):
+            time_text = font.render(f"Time: {self.elapsed_time:.2f}s", True, WHITE)
+            self.display.blit(time_text, [0, 30])
 
     def _move(self, action):
         # [straight, right, left]
