@@ -11,6 +11,8 @@ font = pygame.font.Font('../arial.ttf', 25)
 
 # font = pygame.font.SysFont('arial', 25)
 
+
+
 class Direction(Enum):
     RIGHT = 1
     LEFT = 2
@@ -27,22 +29,44 @@ BLUE1 = (0, 0, 255)
 BLUE2 = (0, 100, 255)
 BLACK = (0, 0, 0)
 GREEN = (0, 200, 0)
+YELLOW = (255,255,0)
 
 BLOCK_SIZE = 20
 SPEED = 40000000
 
+class MovingObstacle:
+    """A single obstacle that hops one block per frame and bounces off walls."""
+    def __init__(self, pos: Point):
+        self.pos = pos
+        # pick a random cardinal direction as a (dx, dy) tuple
+        self.dir = random.choice([(1,0),(-1,0),(0,1),(0,-1)])
+
+    def step(self, w: int, h: int):
+        # compute the new position
+        new = Point(self.pos.x + self.dir[0]*BLOCK_SIZE,
+                    self.pos.y + self.dir[1]*BLOCK_SIZE)
+        # if it would leave the screen, reverse direction
+        if not (0 <= new.x < w and 0 <= new.y < h):
+            self.dir = (-self.dir[0], -self.dir[1])
+            new = Point(self.pos.x + self.dir[0]*BLOCK_SIZE,
+                        self.pos.y + self.dir[1]*BLOCK_SIZE)
+        self.pos = new
+ 
 
 
 class SnakeGameAI:
 
-    def __init__(self, w=640, h=480, num_poison=5):
+    def __init__(self, w=640, h=480, num_poison=5, num_obstacles=1):
         self.w = w
         self.h = h
         self.num_poison = num_poison  # holds the num of poison apples
+        self.num_obstacles = num_obstacles
+
         # init display
         self.display = pygame.display.set_mode((self.w, self.h))
         pygame.display.set_caption('Snake')
         self.clock = pygame.time.Clock()
+        
         self.reset()
 
     def reset(self):
@@ -58,10 +82,13 @@ class SnakeGameAI:
 
         self.score = 0
         self.poison = []  # initializes poison points as an empty list
+        self.moving_obstacles = []  # initializes poison points as an empty list
         self.food = None
         self._place_food()
         for poison in range(self.num_poison):   # places each poison apple down
             self._place_poison()
+        for x in range(self.num_obstacles):   # places each poison apple down
+            self._place_moving_obstacle()
         self.frame_iteration = 0
 
         self.speeds = [] # - R
@@ -94,8 +121,25 @@ class SnakeGameAI:
                 self.poison.pop(-1)
                 self._place_food()
 
+    def _place_moving_obstacle(self):
+        x = random.randint(0, (self.w - BLOCK_SIZE)//BLOCK_SIZE) * BLOCK_SIZE
+        y = random.randint(0, (self.h - BLOCK_SIZE)//BLOCK_SIZE) * BLOCK_SIZE
+        pt = Point(x,y)
+        # avoid snake, food, poison, other moving obstacles
+        if (pt in self.snake or pt == self.food 
+            or pt in self.poison 
+            or any(obs.pos == pt for obs in self.moving_obstacles)):
+            return self._place_moving_obstacle()
+        self.moving_obstacles.append(MovingObstacle(pt))
+
 
     def play_step(self, action):
+
+
+                # 0) **move the obstacles first**  
+        for obs in self.moving_obstacles:
+            obs.step(self.w, self.h)
+
         self.frame_iteration += 1
         # 1. collect user input
         for event in pygame.event.get():
@@ -151,7 +195,8 @@ class SnakeGameAI:
         for point in self.poison:
             if pt == point:
                 return True
-
+        if any(pt == obs.pos for obs in self.moving_obstacles):
+            return True
         return False
 
     def _update_ui(self):
@@ -167,6 +212,10 @@ class SnakeGameAI:
         # draws poison
         for point in self.poison:
             pygame.draw.rect(self.display, GREEN, pygame.Rect(point.x, point.y, BLOCK_SIZE, BLOCK_SIZE))
+
+        for obs in self.moving_obstacles:
+                pygame.draw.rect(self.display, YELLOW,
+                                pygame.Rect(obs.pos.x, obs.pos.y, BLOCK_SIZE, BLOCK_SIZE))
 
         text = font.render("Score: " + str(self.score), True, WHITE)
         self.display.blit(text, [0, 0])

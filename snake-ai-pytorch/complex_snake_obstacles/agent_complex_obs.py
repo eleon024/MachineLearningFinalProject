@@ -172,7 +172,7 @@ def test():
     total_score = 0
     record = 0
     agent = Agent()
-    agent.model.load_state_dict(torch.load("INSERT MODEL FILENAME HERE"))
+    agent.model.load_state_dict(torch.load("model/1000_games_basic_high.pth"))
     game = SnakeGameAI()
     num_testing_games = 1000
     filename_num = num_testing_games
@@ -182,7 +182,7 @@ def test():
         state_old = agent.get_state(game)
 
         # get move
-        final_move = agent.get_action(state_old,epsilon=0)
+        final_move = agent.get_action(state_old,self.epsilon=0)
 
         # perform move and get new state
         reward, done, score = game.play_step(final_move)
@@ -218,5 +218,5 @@ def test():
             num_testing_games -= 1
 
 if __name__ == '__main__':
-    #train()
+    # train()
     test()
