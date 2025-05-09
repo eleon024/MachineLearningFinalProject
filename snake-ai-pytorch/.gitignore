@@ -1,3 +1,4 @@
 checkpoint.pth
 model/1000_games_basic_high.pth
 model/model.pth
+parallel_train.py

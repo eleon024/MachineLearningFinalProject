@@ -11,8 +11,8 @@ MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
 LR = 0.001
 
-
 class Agent:
+
     def __init__(self):
         self.n_games = 0
         self.epsilon = 0 # randomness
@@ -84,9 +84,9 @@ class Agent:
     def train_short_memory(self, state, action, reward, next_state, done):
         self.trainer.train_step(state, action, reward, next_state, done)
 
-    def get_action(self, state):
+    def get_action(self, state, epsilon=80):
         # random moves: tradeoff exploration / exploitation
-        self.epsilon = 80 - self.n_games
+        self.epsilon = epsilon - self.n_games
         final_move = [0,0,0]
         if random.randint(0, 200) < self.epsilon:
             move = random.randint(0, 2)
@@ -144,7 +144,7 @@ def train():
 
             if score > record:
                 record = score
-                agent.model.save(str(filename_num) + "_games_basic_high.pth")
+            #     agent.model.save(str(filename_num) + "_games_basic_high.pth")
 
             print('Game', agent.n_games, 'Score', score, 'Record:', record, "Time", time)
 
@@ -165,6 +165,60 @@ def train():
 
             num_training_games -= 1
 
+def test():
+    plot_scores = []
+    plot_mean_scores = []
+    total_score = 0
+    record = 0
+    agent = Agent()
+    agent.model.load_state_dict(torch.load("simple_snake/model/1000_games_basic_30.83_mean.pth"))
+    game = SnakeGameAI()
+    num_testing_games = 1000
+    filename_num = num_testing_games
+
+    while num_testing_games > 0:
+        # get old state
+        state_old = agent.get_state(game)
+
+        # get move
+        final_move = agent.get_action(state_old,epsilon=0)
+
+        # perform move and get new state
+        reward, done, score = game.play_step(final_move)
+        state_new = agent.get_state(game)
+
+        # train short memory
+        # agent.train_short_memory(state_old, final_move, reward, state_new, done)
+
+        # remember
+        agent.remember(state_old, final_move, reward, state_new, done)
+
+        if done:
+            # train long memory, plot result
+            game.reset()
+            agent.n_games += 1
+            # agent.train_long_memory()
+
+            if score > record:
+                record = score
+                # agent.model.save(str(filename_num) + "_games_basic_high.pth")
+
+            print('Game', agent.n_games, 'Score', score, 'Record:', record)
+
+            plot_scores.append(score)
+            total_score += score
+            mean_score = total_score / agent.n_games
+            plot_mean_scores.append(round(mean_score,2))
+            if num_testing_games == 1:
+                # agent.model.save(str(filename_num) + "_games_basic_" + str(round(mean_score, 2)) + "_mean.pth")
+                plot(plot_scores, plot_mean_scores,title="Traditional Snake Testing: Score vs Number of games",filepath="simple_snake/figures/",filename=str(filename_num)+"_TESTS_basic_" + str(round(mean_score,2)) + "_mean")
+            else:
+                print("before")
+                plot(plot_scores, plot_mean_scores,title="Traditional Snake Testing: Score vs Number of games",filepath="simple_snake/figures/",filename=str(filename_num)+"_TESTS_basic_" + str(round(mean_score,2)) + "_mean",save=False)
+                print("after")
+            num_testing_games -= 1
+
 
 if __name__ == '__main__':
-    train()
+    # train()
+    test()
