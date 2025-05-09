@@ -171,12 +171,15 @@ def test():
     plot_scores = []
     plot_mean_scores = []
     speeds_per_game = [] # - R
+    plot_mean_speed = [] # - R
+    total_time = 0
+    total_speeds = 0
     plot_times = [] # - R
+    plot_mean_time = [] # - R
     total_score = 0
     record = 0
     agent = Agent()
-    agent.model.load_state_dict(torch.load("model/1000_games_basic_high.pth"))
-    agent.model.load_state_dict(torch.load("model/1000_games_basic_high.pth"))
+    agent.model.load_state_dict(torch.load("model/1000_games_complex_1s_1m_21.0_mean.pth"))
     game = SnakeGameAI()
     num_testing_games = 1000
     filename_num = num_testing_games
@@ -224,14 +227,15 @@ def test():
             plot_mean_scores.append(round(mean_score,2))
 
             plot_times.append(time) # - R
+            total_time += time
+            mean_time = total_time / agent.n_games
+            plot_mean_time.append(round(mean_time,2))
 
-            if num_testing_games == 1:
-                # agent.model.save(str(filename_num) + "_games_basic_" + str(round(mean_score, 2)) + "_mean.pth")
-                plot_combined(plot_scores, plot_mean_scores, plot_times, speeds_per_game)
-                # plot(plot_scores, plot_mean_scores,title="CHANGE TITLE",filepath="CHANGE FILEPATH",filename=str(filename_num)+"_TESTS_basic_" + str(round(mean_score,2)) + "_mean")
-            else:
-                plot_combined(plot_scores, plot_mean_scores, plot_times, speeds_per_game)
-                # plot(plot_scores, plot_mean_scores,title="CHANGE TITLE",filepath="CHANGE FILEPATH",filename=str(filename_num)+"_TESTS_basic_" + str(round(mean_score,2)) + "_mean", save=False)
+            total_speeds += avg_speed
+            mean_speed = total_speeds / agent.n_games
+            plot_mean_speed.append(round(mean_speed,2))
+
+            plot_combined(plot_scores, plot_mean_scores, plot_times, plot_mean_time, speeds_per_game, plot_mean_speed)
             num_testing_games -= 1
 
 if __name__ == '__main__':

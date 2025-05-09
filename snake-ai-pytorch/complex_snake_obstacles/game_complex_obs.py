@@ -56,7 +56,7 @@ class MovingObstacle:
 
 class SnakeGameAI:
 
-    def __init__(self, w=640, h=480, num_poison=5, num_obstacles=1):
+    def __init__(self, w=640, h=480, num_poison=3, num_obstacles=3):
         self.w = w
         self.h = h
         self.num_poison = num_poison  # holds the num of poison apples
