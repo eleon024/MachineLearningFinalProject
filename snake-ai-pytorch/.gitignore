@@ -4,3 +4,4 @@ parallel_train.py
 simple_snake/model/500_games_basic_27.19_mean.pth
 simple_snake/model/1000_games_basic_30.83_mean.pth
 .DS_Store
+complex_snake - obstacles/model/1000_games_basic_high.pth
