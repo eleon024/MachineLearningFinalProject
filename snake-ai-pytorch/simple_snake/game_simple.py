@@ -3,6 +3,7 @@ import random
 from enum import Enum
 from collections import namedtuple
 import numpy as np
+import time
 
 pygame.init()
 font = pygame.font.Font('arial.ttf', 25)
@@ -39,6 +40,7 @@ class SnakeGameAI:
 
 
     def reset(self):
+        self.last_food_frame = 0 # - R
         # init game state
         self.direction = Direction.RIGHT
 
@@ -51,6 +53,9 @@ class SnakeGameAI:
         self.food = None
         self._place_food()
         self.frame_iteration = 0
+        self.speeds = []
+        self.start_time = time.time() # starts timer - R
+        self.elapsed_time = 0 # initialize timer - R
 
 
     def _place_food(self):
@@ -79,10 +84,15 @@ class SnakeGameAI:
         if self.is_collision() or self.frame_iteration > 100*len(self.snake):
             game_over = True
             reward = -10
-            return reward, game_over, self.score
+            return reward, game_over, self.score, self.elapsed_time
 
         # 4. place new food or just move
         if self.head == self.food:
+            # - R add below:
+            steps_to_food = self.frame_iteration - self.last_food_frame
+            self.speeds.append(steps_to_food)
+            self.last_food_frame = self.frame_iteration
+
             self.score += 1
             reward = 10
             self._place_food()
@@ -93,7 +103,10 @@ class SnakeGameAI:
         self._update_ui()
         self.clock.tick(SPEED)
         # 6. return game over and score
-        return reward, game_over, self.score
+        self.survival_time = self.frame_iteration
+        self.elapsed_time = time.time() - self.start_time
+
+        return reward, game_over, self.score, self.elapsed_time
 
 
     def is_collision(self, pt=None):
