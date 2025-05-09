@@ -23,9 +23,9 @@ def plot(scores, mean_scores, title, filename, filepath, save=True):
         plt.savefig("figures/"+str(filename)+".svg", format="svg")
 
 
+fig, axs = plt.subplots(1, 3, figsize=(12, 5))
+display.display(fig)
 def plot_combined(scores, mean_scores, times, speeds):
-    fig, axs = plt.subplots(1, 3, figsize=(12, 5))
-    display.display(fig)
     axs[0].cla()
     axs[0].set_title('Score')
     axs[0].plot(scores, label='Score')

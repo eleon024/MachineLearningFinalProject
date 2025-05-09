@@ -6,6 +6,7 @@ from game_simple import SnakeGameAI, Direction, Point
 from model_simple import Linear_QNet, QTrainer
 from helper_simple import plot, plot_combined
 import time
+import matplotlib as plt
 
 MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
@@ -223,6 +224,7 @@ def test():
             if num_testing_games == 1:
                 # agent.model.save(str(filename_num) + "_games_basic_" + str(round(mean_score, 2)) + "_mean.pth")
                 plot_combined(plot_scores, plot_mean_scores, plot_times, speeds_per_game)
+                # plt.savefig("figures/"+str("combined_plot_simple")+".svg", format="svg")
             num_testing_games -= 1
 
 
