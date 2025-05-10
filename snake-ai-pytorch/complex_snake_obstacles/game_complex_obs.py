@@ -6,7 +6,7 @@ import numpy as np
 import time
 
 pygame.init()
-font = pygame.font.Font('../arial.ttf', 25)
+font = pygame.font.Font('arial.ttf', 25)
 
 
 # font = pygame.font.SysFont('arial', 25)

@@ -20,7 +20,7 @@ def plot(scores, mean_scores,save=False,filename="figure"):
     plt.pause(.1)
 
     if (save):
-        plt.savefig("figures/"+str(filename)+".svg", format="svg")
+        plt.savefig("snake-ai-pytorch/figures/"+str(filename)+".svg", format="svg")
 
 
 fig, axs = plt.subplots(1, 3, figsize=(12, 5))
@@ -65,5 +65,5 @@ def plot_combined(plot_scores, plot_mean_scores, plot_times, plot_mean_time, spe
     display.display(fig)
     plt.pause(0.001)
 
-    plt.savefig("figures/"+str("combined_plot_complex_obs")+".svg", format="svg")
+    plt.savefig("snake-ai-pytorch/figures/"+str("combined_plot_complex_obs")+".svg", format="svg")
 

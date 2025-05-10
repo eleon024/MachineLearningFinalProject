@@ -157,12 +157,12 @@ def train():
             plot_times.append(time) # - R
             if num_training_games == 1:
                 agent.model.save(str(filename_num) + "_games_basic_" + str(round(mean_score, 2)) + "_mean.pth")
-                plot_combined(plot_scores, plot_mean_scores, plot_times, speeds_per_game)
-                # plot(plot_scores, plot_mean_scores, save=True,
-                    #  filename=str(filename_num) + "_games_basic_" + str(round(mean_score, 2)) + "_mean")
+                #plot_combined(plot_scores, plot_mean_scores, plot_times, speeds_per_game)
+                plot(plot_scores, plot_mean_scores, save=True,
+                    filename=str(filename_num) + "_games_basic_" + str(round(mean_score, 2)) + "_mean")
             else:
-                plot_combined(plot_scores, plot_mean_scores, plot_times, speeds_per_game)
-                # plot(plot_scores, plot_mean_scores)
+                #plot_combined(plot_scores, plot_mean_scores, plot_times, speeds_per_game)
+                plot(plot_scores, plot_mean_scores)
 
             num_training_games -= 1
 
@@ -179,7 +179,7 @@ def test():
     total_score = 0
     record = 0
     agent = Agent()
-    agent.model.load_state_dict(torch.load("model/1000_games_complex_1s_1m_21.0_mean.pth"))
+    agent.model.load_state_dict(torch.load("snake-ai-pytorch/models/1000_games_complex_1s_1m_21.0_mean.pth"))
     game = SnakeGameAI()
     num_testing_games = 1000
     filename_num = num_testing_games
@@ -239,5 +239,5 @@ def test():
             num_testing_games -= 1
 
 if __name__ == '__main__':
-    # train()
-    test()
+    train()
+    # test()
